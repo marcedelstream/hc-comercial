@@ -8,12 +8,10 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@/assets/icons";
 import "swiper/css";
 import "swiper/css/navigation";
 import SingleItem from "./SingleItem";
-import { Category } from "@prisma/client";
-
 export default function CategoryCarouselArea({
   categories,
 }: {
-  categories: Category[];
+  categories: any[];
 }) {
   const sliderRef = useRef<SwiperRef>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -47,7 +45,7 @@ export default function CategoryCarouselArea({
       <div className="flex items-center justify-between mb-16">
         <div>
           <h2 className="text-xl font-semibold xl:text-heading-5 text-dark">
-            Browse by Category
+            Explorar por Categoría
           </h2>
         </div>
 
