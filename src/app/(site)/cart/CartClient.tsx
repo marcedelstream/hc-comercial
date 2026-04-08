@@ -4,7 +4,7 @@ import { formatPrice } from "@/utils/formatePrice";
 import Link from "next/link";
 
 export default function CartClient() {
-  const { cartDetails, totalPrice, removeItem, incrementQuantity, decrementQuantity } = useCart();
+  const { cartDetails, totalPrice, removeItem, incrementItem: incrementQuantity, decrementItem: decrementQuantity } = useCart();
   const items = Object.values(cartDetails ?? {});
 
   if (items.length === 0) {
