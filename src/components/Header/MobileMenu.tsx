@@ -78,10 +78,11 @@ const MobileMenu = ({ isOpen, onClose, menuData, headerLogo }: MobileMenuProps) 
             <div>
               <Link className="block shrink-0" href="/">
                 <Image
-                  src={headerLogo || "/images/logo/logo-icon.svg"}
-                  alt="Logo"
-                  width={70}
-                  height={70}
+                  src="/hc-comercial-logo.png"
+                  alt="HC COMERCIAL"
+                  width={100}
+                  height={65}
+                  className="object-contain"
                   priority
                 />
               </Link>
@@ -163,22 +164,15 @@ const MobileMenu = ({ isOpen, onClose, menuData, headerLogo }: MobileMenuProps) 
 
           {/* Footer */}
           <div className="p-4 border-t border-gray-3">
-            <div className="flex items-center gap-3">
-              <Link
-                href="/"
-                className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800"
-                onClick={onClose}
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/"
-                className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800"
-                onClick={onClose}
-              >
-                Create an account
-              </Link>
-            </div>
+            <Link
+              href="https://wa.me/595982800258"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-blue text-dark font-semibold text-sm rounded-lg"
+              onClick={onClose}
+            >
+              Consultá por WhatsApp
+            </Link>
           </div>
         </div>
       </div>

@@ -7,12 +7,12 @@ import { menuData } from "./menuData";
 import MobileMenu from "./MobileMenu";
 import DesktopMenu from "./DesktopMenu";
 import {
-  SearchIcon,
   HeartIcon,
   CartIcon,
   MenuIcon,
   CloseIcon,
 } from "./icons";
+import SearchBar from "./SearchBar";
 import { useAppSelector } from "@/redux/store";
 
 type IProps = {
@@ -68,32 +68,12 @@ const MainHeader = ({ headerData }: IProps) => {
         }`}
       >
         {/* Topbar */}
-        <div className="bg-dark py-2.5">
+        <div className="bg-blue py-2">
           <div className="px-4 mx-auto max-w-7xl sm:px-6 xl:px-0">
-            <div className="flex justify-between items-center">
-              <div className="hidden lg:block">
-                <p className="text-sm font-medium text-white">
-                  {headerData?.headerText ||
-                    "Envíos a todo el Paraguay · WhatsApp: +595982800258"}
-                </p>
-              </div>
-              <div className="flex items-center gap-4 ml-auto">
-                <Link
-                  href={`https://wa.me/595982800258`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-medium text-blue hover:underline"
-                >
-                  WhatsApp
-                </Link>
-                <Link
-                  href="/cart"
-                  className="text-sm font-medium text-white transition hover:text-blue"
-                >
-                  Carrito
-                </Link>
-              </div>
-            </div>
+            <p className="text-sm font-semibold text-dark text-center">
+              {headerData?.headerText ||
+                "🚚 Envíos gratis a partir de Gs. 1.000.000"}
+            </p>
           </div>
         </div>
 
@@ -119,8 +99,9 @@ const MainHeader = ({ headerData }: IProps) => {
               <DesktopMenu menuData={menuData} stickyMenu={stickyMenu} />
             </div>
 
-            {/* Botones de acción */}
+            {/* Buscador Desktop + acciones */}
             <div className="flex items-center gap-3">
+              <SearchBar />
               <Link
                 href="/wishlist"
                 className="relative text-gray-700 transition hover:text-blue focus:outline-none"

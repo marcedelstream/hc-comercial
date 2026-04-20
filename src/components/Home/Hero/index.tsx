@@ -9,9 +9,9 @@ const Hero = async () => {
   return (
     <section className="overflow-hidden pb-12 pt-40 bg-[#F7F7F7] ">
       <div className="w-full px-4 mx-auto max-w-7xl sm:px-8 xl:px-0">
-        <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
-          <div className="w-full xl:col-span-2">
-            <div className="relative overflow-hidden bg-white border z-1 border-gray-2 rounded-2xl">
+        <div className="grid grid-cols-1 gap-5 xl:grid-cols-4 xl:items-stretch">
+          <div className="w-full xl:col-span-3">
+            <div className="relative overflow-hidden bg-white border z-1 border-gray-2 rounded-2xl h-full">
               <HeroCarousel sliders={sliders} />
             </div>
           </div>

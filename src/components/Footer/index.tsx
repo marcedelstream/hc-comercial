@@ -3,6 +3,7 @@ import {
   FacebookIcon,
   InstagramIcon,
 } from "@/assets/icons/social";
+import Image from "next/image";
 import Link from "next/link";
 import AccountLinks from "./AccountLinks";
 import FooterBottom from "./FooterBottom";
@@ -16,9 +17,13 @@ const Footer = () => {
         <div className="flex flex-wrap xl:flex-nowrap gap-10 xl:gap-19 xl:justify-between pt-17.5 xl:pt-22.5 pb-10 xl:pb-20">
           <div className="max-w-[330px] w-full">
             <div className="mb-5">
-              <span className="text-2xl font-bold text-dark tracking-tight">
-                HC <span className="bg-dark text-blue px-1 rounded">COMERCIAL</span>
-              </span>
+              <Image
+                src="/hc-comercial-logo.png"
+                alt="HC COMERCIAL"
+                width={130}
+                height={85}
+                className="object-contain"
+              />
             </div>
             <p className="text-base text-dark-3 mb-6">
               Equipos gastronómicos de alta calidad para tu negocio. Envíos a todo el Paraguay.
@@ -58,14 +63,18 @@ const Footer = () => {
             {/* Redes Sociales */}
             <div className="flex items-center gap-4 mt-7.5">
               <Link
-                href="#"
+                href="https://www.facebook.com/HCComercialterminalSrl"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex duration-200 ease-out hover:text-blue"
               >
                 <span className="sr-only">Facebook</span>
                 <FacebookIcon />
               </Link>
               <Link
-                href="#"
+                href="https://www.instagram.com/hccomercialpy/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex duration-200 ease-out hover:text-blue"
               >
                 <span className="sr-only">Instagram</span>

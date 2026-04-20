@@ -14,8 +14,8 @@ const featureData = [
   },
   {
     img: "/images/icons/icon-03.svg",
-    title: "Pago seguro con Bancard",
-    description: "Tu transacción protegida",
+    title: "Pago con Bancard",
+    description: "Pago simulado en esta demo",
   },
   {
     img: "/images/icons/icon-04.svg",
@@ -28,7 +28,7 @@ const FooterFeature = () => {
   return (
     <section className="pb-[60px]">
       <div className="max-w-[1060px] w-full mx-auto px-4 sm:px-8 xl:px-0">
-        <div className="flex flex-wrap items-center gap-7.5 xl:gap-12.5">
+        <div className="grid grid-cols-2 gap-7.5 xl:gap-12.5">
           {featureData.map((item, key) => (
             <div className="flex items-center gap-4" key={key}>
               <Image src={item.img} alt="icono" width={40} height={41} />

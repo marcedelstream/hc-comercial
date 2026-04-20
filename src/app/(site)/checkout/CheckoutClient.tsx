@@ -92,7 +92,7 @@ export default function CheckoutClient() {
 
   if (step === "processing") {
     return (
-      <main className="pt-40 pb-20">
+      <main className="pt-8 pb-20">
         <div className="max-w-lg mx-auto px-4 text-center">
           <div className="bg-white border border-gray-3 rounded-2xl p-12">
             <div className="flex justify-center mb-6">
@@ -108,7 +108,7 @@ export default function CheckoutClient() {
 
   if (step === "success") {
     return (
-      <main className="pt-40 pb-20">
+      <main className="pt-8 pb-20">
         <div className="max-w-lg mx-auto px-4 text-center">
           <div className="bg-white border border-gray-3 rounded-2xl p-12">
             <div className="w-20 h-20 bg-blue rounded-full flex items-center justify-center mx-auto mb-6">
@@ -154,7 +154,7 @@ export default function CheckoutClient() {
   }
 
   return (
-    <main className="pt-40 pb-20">
+    <main className="pt-8 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 xl:px-0">
         <h1 className="text-2xl font-bold text-dark mb-8">Finalizar compra</h1>
 

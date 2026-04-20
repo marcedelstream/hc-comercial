@@ -9,7 +9,7 @@ export default function CartClient() {
 
   if (items.length === 0) {
     return (
-      <main className="pt-40 pb-20">
+      <main className="pt-8 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 xl:px-0">
           <h1 className="text-3xl font-bold text-dark mb-8">Carrito de compras</h1>
           <div className="text-center py-20">
@@ -33,7 +33,7 @@ export default function CartClient() {
   }
 
   return (
-    <main className="pt-40 pb-20">
+    <main className="pt-8 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 xl:px-0">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-dark">Carrito de compras</h1>

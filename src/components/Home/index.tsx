@@ -1,4 +1,3 @@
-import Newsletter from "../Common/Newsletter";
 import BestSeller from "./BestSeller";
 import Categories from "./Categories";
 import CountDown from "./Countdown";
@@ -18,7 +17,6 @@ const Home = () => {
       <BestSeller />
       <CountDown />
       <Testimonials />
-      <Newsletter />
       <FooterFeature />
     </main>
   );

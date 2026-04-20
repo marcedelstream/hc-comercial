@@ -7,23 +7,26 @@ export const metadata = {
   description: "Equipos gastronómicos de alta calidad. Freidoras, hornos, heladeras, batidoras y más.",
 };
 
-export default function ShopPage({
+export default async function ShopPage({
   searchParams,
 }: {
   searchParams: Promise<{ category?: string; sort?: string }>;
 }) {
-  // Usar todos los productos para la demo (searchParams es async en Next 15)
-  const products = staticProducts;
+  const { category } = await searchParams;
+  const allProducts = staticProducts;
+  const products = category
+    ? allProducts.filter((p) => p.category.slug === category)
+    : allProducts;
   const categories = staticCategories;
 
   return (
-    <main className="pt-40 pb-20">
+    <main className="pt-8 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 xl:px-0">
         {/* Encabezado */}
         <div className="mb-10">
           <h1 className="text-3xl font-bold text-dark mb-2">Equipos Gastronómicos</h1>
           <p className="text-dark-3">
-            {products.length} productos disponibles · Todos con garantía y envío a todo el Paraguay
+            {products.length} {products.length === 1 ? "producto" : "productos"} disponibles · Todos con garantía y envío a todo el Paraguay
           </p>
         </div>
 
@@ -36,20 +39,21 @@ export default function ShopPage({
                 <li>
                   <Link
                     href="/shop"
-                    className="block text-sm text-dark-3 hover:text-blue py-1.5 px-3 rounded-lg hover:bg-gray-1 transition-colors"
+                    className={`block text-sm py-1.5 px-3 rounded-lg transition-colors ${!category ? "text-blue font-semibold bg-gray-1" : "text-dark-3 hover:text-blue hover:bg-gray-1"}`}
                   >
-                    Todos los productos ({products.length})
+                    Todos los productos ({allProducts.length})
                   </Link>
                 </li>
                 {categories.map((cat) => {
-                  const count = products.filter(
+                  const count = allProducts.filter(
                     (p) => p.category.slug === cat.slug
                   ).length;
+                  const isActive = category === cat.slug;
                   return (
                     <li key={cat.id}>
                       <Link
                         href={`/shop?category=${cat.slug}`}
-                        className="flex justify-between items-center text-sm text-dark-3 hover:text-blue py-1.5 px-3 rounded-lg hover:bg-gray-1 transition-colors"
+                        className={`flex justify-between items-center text-sm py-1.5 px-3 rounded-lg transition-colors ${isActive ? "text-blue font-semibold bg-gray-1" : "text-dark-3 hover:text-blue hover:bg-gray-1"}`}
                       >
                         <span>{cat.title}</span>
                         <span className="text-xs text-gray-5 bg-gray-2 px-2 py-0.5 rounded-full">

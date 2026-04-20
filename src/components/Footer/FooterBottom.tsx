@@ -9,12 +9,9 @@ const FooterBottom = () => {
             &copy; {year} HC COMERCIAL. Todos los derechos reservados.
           </p>
 
-          <div className="flex flex-wrap items-center gap-4">
-            <p className="font-normal text-white text-sm">Pago seguro con:</p>
-            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-md">
-              <span className="font-bold text-sm text-dark">BANCARD</span>
-            </div>
-          </div>
+          <p className="font-normal text-white text-sm">
+            Desarrollado por <span className="text-blue font-semibold">mescobar</span>
+          </p>
         </div>
       </div>
     </div>
