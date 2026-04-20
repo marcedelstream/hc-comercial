@@ -155,12 +155,12 @@ const ProductItem = ({ item, bgClr = "[#F6F7FB]" }: Props) => {
         </Link>
       </h3>
 
-      <span className="flex flex-col gap-0.5">
-        <span className="text-sm font-bold text-dark">
+      <span className="flex flex-col gap-0.5 min-w-0">
+        <span className="text-sm font-bold text-dark truncate">
           {formatPrice(item.discountedPrice || item.price)}
         </span>
         {item.discountedPrice && (
-          <span className="text-xs line-through text-dark-4">
+          <span className="text-xs line-through text-dark-4 truncate">
             {formatPrice(item.price)}
           </span>
         )}

@@ -28,7 +28,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const related = getRelatedProducts(slug, 4);
 
   return (
-    <main className="pt-24 sm:pt-28 pb-20">
+    <main className="pt-6 sm:pt-10 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 xl:px-0">
         {/* Breadcrumb */}
         <nav className="mb-8 text-sm text-dark-4">
@@ -69,13 +69,13 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             </p>
 
             {/* Precio */}
-            <div className="flex items-baseline gap-3 mb-6">
-              <span className="text-3xl font-bold text-dark">
+            <div className="flex flex-wrap items-center gap-2 mb-6">
+              <span className="text-2xl font-bold text-dark">
                 {formatPrice(product.discountedPrice ?? product.price)}
               </span>
               {product.discountedPrice && (
                 <>
-                  <span className="text-xl line-through text-dark-4">
+                  <span className="text-sm line-through text-dark-4">
                     {formatPrice(product.price)}
                   </span>
                   <span className="px-2 py-1 text-xs font-bold text-dark bg-blue rounded-full">

@@ -91,11 +91,11 @@ export default function ProductActions({ product }: { product: StaticProduct }) 
       </div>
 
       {/* Botones de acción */}
-      <div className="flex flex-wrap gap-3">
+      <div className="grid grid-cols-2 gap-3">
         <button
           onClick={handleAddToCart}
           disabled={product.quantity < 1}
-          className="flex-1 py-3 px-6 font-semibold text-dark bg-blue hover:bg-blue-dark rounded-lg ease-out duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-3 px-4 font-semibold text-dark text-sm bg-blue hover:bg-blue-dark rounded-lg ease-out duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isAlreadyAdded ? "Agregar más" : "Agregar al carrito"}
         </button>
@@ -103,7 +103,7 @@ export default function ProductActions({ product }: { product: StaticProduct }) 
         <button
           onClick={handleBuyNow}
           disabled={product.quantity < 1}
-          className="flex-1 py-3 px-6 font-semibold text-white bg-dark hover:bg-dark-2 rounded-lg ease-out duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-3 px-4 font-semibold text-white text-sm bg-dark hover:bg-dark-2 rounded-lg ease-out duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Comprar ahora
         </button>

@@ -55,7 +55,7 @@ export default function CategoryCarouselArea({
             className={`swiper-button-prev ${
               currentIndex === 0 ? "opacity-50 pointer-events-none" : ""
             }`}
-            aria-label="previous button"
+            aria-label="Anterior"
             disabled={currentIndex === 0}
           >
             <ChevronLeftIcon />
@@ -66,7 +66,7 @@ export default function CategoryCarouselArea({
             className={`swiper-button-next ${
               isEnd ? "opacity-50 pointer-events-none" : ""
             }`}
-            aria-label="next button"
+            aria-label="Siguiente"
             disabled={isEnd}
           >
             <ChevronRightIcon />
