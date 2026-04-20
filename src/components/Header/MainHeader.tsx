@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useCart } from "@/hooks/useCart";
 import { menuData } from "./menuData";
@@ -99,14 +100,17 @@ const MainHeader = ({ headerData }: IProps) => {
         {/* Header Principal */}
         <div className="px-4 mx-auto max-w-7xl sm:px-6 xl:px-0">
           <div className="flex items-center justify-between py-4 xl:py-0">
-            {/* Logo / Nombre */}
+            {/* Logo */}
             <div>
               <Link className="block py-2 shrink-0" href="/">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-dark tracking-tight">
-                    HC <span className="text-blue bg-dark px-1 rounded">COMERCIAL</span>
-                  </span>
-                </div>
+                <Image
+                  src="/hc-comercial-logo.png"
+                  alt="HC COMERCIAL"
+                  width={130}
+                  height={85}
+                  className="h-14 w-auto object-contain"
+                  priority
+                />
               </Link>
             </div>
 

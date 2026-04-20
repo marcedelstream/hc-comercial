@@ -21,9 +21,9 @@ export async function generateMetadata(): Promise<Metadata> {
       images: seoSettings?.metaImage ? [seoSettings.metaImage] : [],
     },
     icons: {
-      icon: seoSettings?.favicon || "/favicon.ico",
-      shortcut: seoSettings?.favicon || "/favicon.ico",
-      apple: seoSettings?.favicon || "/favicon.ico",
+      icon: "/hc-comercial-logo.ico",
+      shortcut: "/hc-comercial-logo.ico",
+      apple: "/hc-comercial-logo.png",
     },
   };
 }
