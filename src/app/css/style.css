@@ -1,6 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
 
 @import "tailwindcss";
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker-animate {
+  animation: ticker 22s linear infinite;
+  display: inline-block;
+  white-space: nowrap;
+}
 @plugin "@tailwindcss/typography";
 @plugin "@tailwindcss/forms";
 

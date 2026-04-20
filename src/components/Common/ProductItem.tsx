@@ -12,7 +12,6 @@ import { usePathname } from "next/navigation";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import CheckoutBtn from "../Shop/CheckoutBtn";
-import WishlistButton from "../Wishlist/AddWishlistButton";
 import Tooltip from "./Tooltip";
 
 type Props = {
@@ -136,10 +135,6 @@ const ProductItem = ({ item, bgClr = "[#F6F7FB]" }: Props) => {
             </button>
           )}
 
-          <WishlistButton
-            item={item}
-            handleItemToWishList={handleItemToWishList}
-          />
         </div>
       </div>
 

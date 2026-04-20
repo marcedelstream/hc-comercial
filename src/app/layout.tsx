@@ -21,8 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
       images: seoSettings?.metaImage ? [seoSettings.metaImage] : [],
     },
     icons: {
-      icon: "/hc-comercial-logo.ico",
-      shortcut: "/hc-comercial-logo.ico",
+      icon: "/hc-comercial-logo.png",
+      shortcut: "/hc-comercial-logo.png",
       apple: "/hc-comercial-logo.png",
     },
   };

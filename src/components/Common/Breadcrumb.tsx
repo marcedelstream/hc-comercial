@@ -23,7 +23,7 @@ interface BreadcrumbProps {
 const Breadcrumb = ({
   items,
   title,
-  homeLabel = "Home",
+  homeLabel = "Inicio",
   homeHref = "/",
   separator = ">",
 }: BreadcrumbProps) => {
@@ -38,7 +38,7 @@ const Breadcrumb = ({
 
   return (
     <div className="overflow-hidden pt-28">
-      <div className=" bg-gray-2">
+      <div className="bg-white border-b border-gray-2">
         <div className="w-full px-4 mx-auto max-w-7xl sm:px-8 xl:px-0">
           <div className="flex items-center justify-start gap-3 py-5">
             <nav aria-label="Breadcrumb">
@@ -146,33 +146,36 @@ export const AdminBreadcrumb = ({
   );
 };
 
+const SEGMENT_TRANSLATIONS: Record<string, string> = {
+  shop: "Tienda",
+  products: "Productos",
+  cart: "Carrito",
+  checkout: "Pago",
+  contacto: "Contacto",
+  wishlist: "Lista de deseos",
+  admin: "Admin",
+};
+
 // Helper function to generate breadcrumbs from the current path
 function generateBreadcrumbsFromPath(
   pathname: string,
-  homeLabel = "Home",
+  homeLabel = "Inicio",
   homeHref = "/"
 ): BreadcrumbItem[] {
-  // Start with home
   const breadcrumbs: BreadcrumbItem[] = [{ label: homeLabel, href: homeHref }];
 
-  // Skip the first slash and split the path
   const pathSegments = pathname.split("/").filter(Boolean);
 
-  // Build up the breadcrumb items
   let currentPath = "";
 
-  pathSegments.forEach((segment, index) => {
+  pathSegments.forEach((segment) => {
     currentPath += `/${segment}`;
 
-    // Format the label (capitalize, replace hyphens with spaces)
-    const label = segment
-      .replace(/-/g, " ")
-      .replace(/\b\w/g, (char) => char.toUpperCase());
+    const label =
+      SEGMENT_TRANSLATIONS[segment] ||
+      segment.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 
-    breadcrumbs.push({
-      label,
-      href: currentPath,
-    });
+    breadcrumbs.push({ label, href: currentPath });
   });
 
   return breadcrumbs;

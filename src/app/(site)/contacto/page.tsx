@@ -97,7 +97,15 @@ export default function ContactoPage() {
             <div>
               <h2 className="text-lg font-semibold text-dark mb-1">Ubicación</h2>
               <p className="text-sm text-dark-3 mb-1">Asunción, Paraguay</p>
-              <p className="text-sm text-dark-3">ventas@hccomercial.com.py</p>
+              <p className="text-sm text-dark-3 mb-4">ventas@hccomercial.com.py</p>
+              <Link
+                href="https://maps.app.goo.gl/UsnHsPBwhEU16GnN6"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 py-2.5 px-5 bg-blue text-dark font-semibold text-sm rounded-xl hover:bg-yellow-400 ease-out duration-200"
+              >
+                Ver en Google Maps
+              </Link>
             </div>
           </div>
         </div>

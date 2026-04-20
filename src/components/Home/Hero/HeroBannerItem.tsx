@@ -18,8 +18,8 @@ export default function HeroBannerItem({ bannerItem }: { bannerItem: any }) {
             <p className="font-medium text-dark-4 text-xs mb-1.5 uppercase">
               Oferta especial
             </p>
-            <span className="flex items-center gap-2.5">
-              <span className="font-bold text-heading-5 text-dark">
+            <span className="flex flex-col gap-1">
+              <span className="font-bold text-base text-dark">
                 {formatPrice(
                   bannerItem?.product?.discountedPrice
                     ? bannerItem?.product?.discountedPrice
@@ -27,7 +27,7 @@ export default function HeroBannerItem({ bannerItem }: { bannerItem: any }) {
                 )}
               </span>
               {bannerItem?.product?.discountedPrice && (
-                <span className="text-2xl font-medium line-through text-dark-4">
+                <span className="text-xs font-medium line-through text-dark-4">
                   {formatPrice(bannerItem?.product?.price)}
                 </span>
               )}

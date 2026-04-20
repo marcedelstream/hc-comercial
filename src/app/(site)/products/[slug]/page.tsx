@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { formatPrice } from "@/utils/formatePrice";
 import ProductActions from "./ProductActions";
 import ShippingCalculator from "./ShippingCalculator";
+import ScrollTopOnMount from "./ScrollTopOnMount";
 import Link from "next/link";
 
 export async function generateStaticParams() {
@@ -29,16 +30,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <main className="pt-6 sm:pt-10 pb-20">
+      <ScrollTopOnMount />
       <div className="max-w-7xl mx-auto px-4 sm:px-8 xl:px-0">
-        {/* Breadcrumb */}
-        <nav className="mb-8 text-sm text-dark-4">
-          <Link href="/" className="hover:text-blue">Inicio</Link>
-          {" / "}
-          <Link href="/shop" className="hover:text-blue">Tienda</Link>
-          {" / "}
-          <span className="text-dark">{product.title}</span>
-        </nav>
-
         {/* Producto */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
           {/* Imagen placeholder */}
