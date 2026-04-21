@@ -87,7 +87,7 @@ const SearchBar = () => {
   const Dropdown = () => (
     <>
       {isOpen && hasResults && (
-        <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-3 rounded-2xl shadow-lg z-50 overflow-hidden">
+        <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-3 rounded-2xl shadow-md z-50 overflow-hidden">
           {categoryResults.length > 0 && (
             <div className="px-4 pt-3 pb-1">
               <p className="text-xs font-semibold text-gray-5 uppercase tracking-wider mb-2">Categorías</p>
@@ -130,7 +130,7 @@ const SearchBar = () => {
         </div>
       )}
       {isOpen && !hasResults && query.trim().length >= 2 && (
-        <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-3 rounded-2xl shadow-lg z-50 px-4 py-4 text-center">
+        <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-3 rounded-2xl shadow-md z-50 px-4 py-4 text-center">
           <p className="text-sm text-dark-3">Sin resultados para <strong>"{query}"</strong></p>
         </div>
       )}

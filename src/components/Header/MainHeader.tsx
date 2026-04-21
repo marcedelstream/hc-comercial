@@ -6,33 +6,26 @@ import { useCart } from "@/hooks/useCart";
 import { menuData } from "./menuData";
 import MobileMenu from "./MobileMenu";
 import DesktopMenu from "./DesktopMenu";
-import {
-  CartIcon,
-  MenuIcon,
-  CloseIcon,
-} from "./icons";
+import { CartIcon, MenuIcon, CloseIcon } from "./icons";
 import SearchBar from "./SearchBar";
 
 type IProps = {
   headerData?: any | null;
 };
 
+const TICKER_MSG1 = "\u00a0\u00a0\u00a0🚚 Envíos a todo el Paraguay · WhatsApp: +595982800258\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0";
+const TICKER_MSG2 = "🎁 Envíos gratis desde Gs. 1.000.000\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0";
+const TICKER_FULL = TICKER_MSG1 + TICKER_MSG2;
+
 const MainHeader = ({ headerData }: IProps) => {
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
   const { handleCartClick, cartCount } = useCart();
 
-  const handleStickyMenu = () => {
-    if (window.scrollY >= 80) {
-      setStickyMenu(true);
-    } else {
-      setStickyMenu(false);
-    }
-  };
-
   useEffect(() => {
-    window.addEventListener("scroll", handleStickyMenu);
-    return () => window.removeEventListener("scroll", handleStickyMenu);
+    const handleScroll = () => setStickyMenu(window.scrollY >= 80);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
@@ -43,9 +36,9 @@ const MainHeader = ({ headerData }: IProps) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const tickerText = headerData?.headerText
-    ? `${headerData.headerText}`
-    : "🚚 Envíos a todo el Paraguay · WhatsApp: +595982800258 \u00a0\u00a0\u00a0\u00a0\u00a0 🎁 Envíos gratis desde Gs. 1.000.000 \u00a0\u00a0\u00a0\u00a0\u00a0";
+  const tickerContent = headerData?.headerText
+    ? `${headerData.headerText}\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0`
+    : TICKER_FULL;
 
   return (
     <>
@@ -54,15 +47,7 @@ const MainHeader = ({ headerData }: IProps) => {
           stickyMenu ? "shadow-sm" : ""
         }`}
       >
-        {/* Topbar marquee */}
-        <div className="bg-blue py-2 overflow-hidden">
-          <div className="ticker-animate text-sm font-semibold text-dark">
-            <span>{tickerText}</span>
-            <span>{tickerText}</span>
-          </div>
-        </div>
-
-        {/* Header Principal */}
+        {/* Header Principal: logo + buscador + menú + carrito */}
         <div className="px-4 mx-auto max-w-7xl sm:px-6 xl:px-0">
           <div className="flex items-center gap-4 py-3 xl:py-0">
             {/* Logo */}
@@ -117,6 +102,14 @@ const MainHeader = ({ headerData }: IProps) => {
                 {navigationOpen ? <CloseIcon /> : <MenuIcon />}
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* Ticker/marquee — debajo del área de navegación */}
+        <div className="bg-blue py-1.5 overflow-hidden">
+          <div className="ticker-animate text-xs font-semibold text-dark">
+            <span>{tickerContent}</span>
+            <span>{tickerContent}</span>
           </div>
         </div>
       </header>

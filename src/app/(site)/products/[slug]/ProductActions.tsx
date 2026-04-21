@@ -1,22 +1,16 @@
 "use client";
 import { useCart } from "@/hooks/useCart";
-import { addItemToWishlist } from "@/redux/features/wishlist-slice";
-import { AppDispatch, useAppSelector } from "@/redux/store";
 import { StaticProduct } from "@/data/staticData";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function ProductActions({ product }: { product: StaticProduct }) {
   const { addItem, cartDetails } = useCart();
-  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const [qty, setQty] = useState(1);
 
-  const wishlistItems = useAppSelector((state) => state.wishlistReducer.items);
   const isAlreadyAdded = Object.values(cartDetails ?? {}).some((c) => c.id === product.id);
-  const isWishlisted = Object.values(wishlistItems ?? {}).some((w) => w.id === product.id);
 
   const cartItem = {
     id: product.id,
@@ -49,21 +43,6 @@ export default function ProductActions({ product }: { product: StaticProduct }) 
     // @ts-ignore
     addItem(cartItem);
     router.push("/checkout");
-  };
-
-  const handleWishlist = () => {
-    dispatch(
-      addItemToWishlist({
-        id: product.id,
-        title: product.title,
-        slug: product.slug,
-        image: "",
-        price: product.discountedPrice ?? product.price,
-        quantity: product.quantity,
-        color: "",
-      })
-    );
-    toast.success(isWishlisted ? "Quitado de la lista de deseos" : "¡Agregado a la lista de deseos!");
   };
 
   return (
@@ -108,25 +87,6 @@ export default function ProductActions({ product }: { product: StaticProduct }) 
           Comprar ahora
         </button>
       </div>
-
-      {/* Lista de deseos */}
-      <button
-        onClick={handleWishlist}
-        className="flex items-center gap-2 text-sm text-dark-3 hover:text-blue transition-colors"
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill={isWishlisted ? "currentColor" : "none"}
-          stroke="currentColor"
-          strokeWidth="2"
-          className={isWishlisted ? "text-red" : ""}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-        </svg>
-        {isWishlisted ? "Quitado de la lista de deseos" : "Agregar a la lista de deseos"}
-      </button>
     </div>
   );
 }

@@ -7,7 +7,7 @@ export const menuData: MenuItem[] = [
   },
   {
     title: "Ofertas",
-    path: "/shop?category=ofertas",
+    path: "/ofertas",
   },
   {
     title: "Contacto",
