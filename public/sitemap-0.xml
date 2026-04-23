@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+<url><loc>http://localhost:3000/cart</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/checkout</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/contacto</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/ofertas</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/products/amasadora-industrial-ai-25kg</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/products/batidora-planetaria-bp-20l</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/products/cafetera-expreso-doble-ce-300</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/products/camara-frigorifica-cf-8m3</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/products/cocina-industrial-6-hornallas-ci-600</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/products/freidora-industrial-fi-2000</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/products/heladera-comercial-hc-350l</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/products/horno-convector-hc-600</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/products/licuadora-industrial-li-5l</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/products/maquina-de-pasta-mp-180</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/products/microondas-comercial-mc-30l</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>http://localhost:3000/products/plancha-grill-doble-pg-900</loc><lastmod>2026-04-23T13:51:07.077Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+</urlset>
