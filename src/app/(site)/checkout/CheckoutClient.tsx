@@ -14,12 +14,14 @@ type FormData = {
   departamento: string;
   ciudad: string;
   metodoPago: "efectivo" | "transferencia" | "tarjeta" | "";
+  tipoEntrega: "envio" | "pickup";
 };
 
 export default function CheckoutClient() {
   const { cartDetails, totalPrice, clearCart } = useCart();
   const items = Object.values(cartDetails ?? {});
   const [step, setStep] = useState<"form" | "processing" | "success">("form");
+  const [orderNumber, setOrderNumber] = useState<string>("")
   const [form, setForm] = useState<FormData>({
     nombre: "",
     apellido: "",
@@ -29,11 +31,13 @@ export default function CheckoutClient() {
     departamento: "",
     ciudad: "",
     metodoPago: "",
+    tipoEntrega: "envio",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const isPickup = form.tipoEntrega === "pickup";
   const dept = departamentosParaguay.find((d) => d.nombre === form.departamento);
-  const shippingCost = dept?.costoFlete ?? 0;
+  const shippingCost = isPickup ? 0 : (dept?.costoFlete ?? 0);
   const total = (totalPrice ?? 0) + shippingCost;
 
   const validate = (): boolean => {
@@ -42,9 +46,11 @@ export default function CheckoutClient() {
     if (!form.apellido.trim()) newErrors.apellido = "Requerido";
     if (!form.email.trim() || !form.email.includes("@")) newErrors.email = "Email inválido";
     if (!form.telefono.trim()) newErrors.telefono = "Requerido";
-    if (!form.direccion.trim()) newErrors.direccion = "Requerido";
-    if (!form.departamento) newErrors.departamento = "Seleccioná un departamento";
-    if (!form.ciudad.trim()) newErrors.ciudad = "Requerido";
+    if (!isPickup) {
+      if (!form.direccion.trim()) newErrors.direccion = "Requerido";
+      if (!form.departamento) newErrors.departamento = "Seleccioná un departamento";
+      if (!form.ciudad.trim()) newErrors.ciudad = "Requerido";
+    }
     if (!form.metodoPago) newErrors.metodoPago = "Seleccioná un método de pago";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -54,7 +60,25 @@ export default function CheckoutClient() {
     e.preventDefault();
     if (!validate()) return;
     setStep("processing");
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer: form,
+          items,
+          shippingDept: form.departamento,
+          shippingCost,
+          subtotal: totalPrice ?? 0,
+          total,
+          paymentMethod: form.metodoPago,
+        }),
+      });
+      const data = await res.json();
+      if (data.orderNumber) setOrderNumber(data.orderNumber);
+    } catch {
+      // Si falla el guardado, igual mostramos éxito (la orden llegará por WhatsApp)
+    }
     setStep("success");
     clearCart();
   };
@@ -100,6 +124,11 @@ export default function CheckoutClient() {
             <p className="text-dark-3 mb-2">
               Gracias <strong>{form.nombre}</strong>, tu pedido fue confirmado.
             </p>
+            {orderNumber && (
+              <p className="text-sm font-mono bg-gray-1 border border-gray-3 rounded-lg px-4 py-2 mb-3 text-dark-3">
+                N° de orden: <strong className="text-dark">{orderNumber}</strong>
+              </p>
+            )}
             <p className="text-dark-3 mb-6">
               Nos comunicaremos a <strong>{form.email}</strong> y <strong>{form.telefono}</strong> para coordinar el envío y el pago.
             </p>
@@ -107,7 +136,10 @@ export default function CheckoutClient() {
               <p className="font-semibold text-dark mb-2">Resumen del pedido:</p>
               <p className="text-dark-3">Total: <strong className="text-dark">{formatPrice(total)}</strong></p>
               <p className="text-dark-3">Método de pago: <strong className="text-dark">{metodoPagoLabel[form.metodoPago] || form.metodoPago}</strong></p>
-              <p className="text-dark-3">Destino: <strong className="text-dark">{form.departamento} - {form.ciudad}</strong></p>
+              {isPickup
+                ? <p className="text-dark-3">Entrega: <strong className="text-dark">Pasar a buscar por el local</strong></p>
+                : <p className="text-dark-3">Destino: <strong className="text-dark">{form.departamento} - {form.ciudad}</strong></p>
+              }
             </div>
             <div className="flex flex-col gap-3">
               <Link
@@ -117,7 +149,7 @@ export default function CheckoutClient() {
                 Volver al inicio
               </Link>
               <Link
-                href={`https://wa.me/595982800258?text=Hola! Acabo de realizar un pedido. Nombre: ${encodeURIComponent(form.nombre + " " + form.apellido)}`}
+                href={`https://wa.me/595982800258?text=Hola! Acabo de realizar un pedido.${orderNumber ? " N° " + orderNumber + "." : ""} Nombre: ${encodeURIComponent(form.nombre + " " + form.apellido)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 py-3 px-8 font-semibold text-white bg-dark hover:bg-dark-2 rounded-lg ease-out duration-200"
@@ -170,7 +202,36 @@ export default function CheckoutClient() {
                   </div>
                 </div>
 
+                {/* Tipo de entrega */}
+                <div className="bg-white border border-gray-3 rounded-2xl p-6">
+                  <h2 className="text-lg font-semibold text-dark mb-5">Tipo de entrega</h2>
+                  <div className="grid grid-cols-2 gap-3">
+                    <label className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${!isPickup ? "border-blue bg-blue/5" : "border-gray-3 hover:border-gray-4"}`}>
+                      <input type="radio" name="tipoEntrega" value="envio" checked={!isPickup} onChange={() => handleChange("tipoEntrega", "envio")} className="accent-current" />
+                      <div>
+                        <p className="font-semibold text-dark text-sm">Envío a domicilio</p>
+                        <p className="text-xs text-dark-3 mt-0.5">Te lo llevamos.</p>
+                      </div>
+                    </label>
+                    <label className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${isPickup ? "border-blue bg-blue/5" : "border-gray-3 hover:border-gray-4"}`}>
+                      <input type="radio" name="tipoEntrega" value="pickup" checked={isPickup} onChange={() => handleChange("tipoEntrega", "pickup")} className="accent-current" />
+                      <div>
+                        <p className="font-semibold text-dark text-sm">Pasar a buscar</p>
+                        <p className="text-xs text-dark-3 mt-0.5">Retirás vos en el local.</p>
+                      </div>
+                    </label>
+                  </div>
+                  {isPickup && (
+                    <div className="mt-4 p-4 bg-blue/10 border border-blue rounded-xl text-sm text-dark">
+                      <p className="font-semibold mb-1">Dirección del local:</p>
+                      <p className="text-dark-3">HC COMERCIAL · Asunción, Paraguay</p>
+                      <p className="text-dark-3">Coordinamos el horario de retiro por WhatsApp.</p>
+                    </div>
+                  )}
+                </div>
+
                 {/* Dirección de envío */}
+                {!isPickup && (
                 <div className="bg-white border border-gray-3 rounded-2xl p-6">
                   <h2 className="text-lg font-semibold text-dark mb-5">Dirección de envío</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -196,6 +257,7 @@ export default function CheckoutClient() {
                     </div>
                   )}
                 </div>
+                )}
 
                 {/* Método de pago */}
                 <div className="bg-white border border-gray-3 rounded-2xl p-6">

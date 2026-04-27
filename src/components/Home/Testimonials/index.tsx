@@ -4,8 +4,8 @@ import SingleItem from "./SingleItem";
 import testimonialsData from "./testimonialsData";
 import TestimonialsHeader from "./TestimonialsHeader";
 import { useTestimonialSwiper } from "./useTestimonialSwiper";
+import type { Testimonial } from "@/types/testimonial";
 
-// Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
 
@@ -15,7 +15,12 @@ const BREAKPOINTS = {
   1200: { slidesPerView: 3 },
 } as const;
 
-const Testimonials = () => {
+interface Props {
+  initialData?: Testimonial[]
+}
+
+const Testimonials = ({ initialData }: Props) => {
+  const data = initialData && initialData.length > 0 ? initialData : testimonialsData;
   const { sliderRef, handlePrev, handleNext, onSlideChange, currentIndex } =
     useTestimonialSwiper();
 
@@ -27,7 +32,7 @@ const Testimonials = () => {
             onPrev={handlePrev}
             onNext={handleNext}
             isPrevDisabled={currentIndex === 0}
-            isNextDisabled={currentIndex === testimonialsData.length - 1}
+            isNextDisabled={currentIndex === data.length - 1}
           />
 
           <Swiper
@@ -38,11 +43,7 @@ const Testimonials = () => {
             breakpoints={BREAKPOINTS}
             onSlideChange={onSlideChange}
           >
-            {[
-              ...testimonialsData,
-              ...testimonialsData,
-              ...testimonialsData,
-            ].map((item, key) => (
+            {[...data, ...data, ...data].map((item, key) => (
               <SwiperSlide key={key}>
                 <SingleItem testimonial={item} />
               </SwiperSlide>

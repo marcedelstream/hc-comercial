@@ -33,7 +33,7 @@ const HeroCarousal = ({ sliders }: { sliders: any[] }) => {
               )}
 
               <h1 className="mb-3 text-xl font-semibold text-dark sm:text-3xl">
-                <Link href={`/products/${slider?.product?.slug}`}>
+                <Link href={slider?.product?.slug?.startsWith('/') ? slider.product.slug : `/products/${slider?.product?.slug}`}>
                   {slider?.product?.title}
                 </Link>
               </h1>
@@ -43,7 +43,7 @@ const HeroCarousal = ({ sliders }: { sliders: any[] }) => {
               </p>
 
               <Link
-                href={`/products/${slider?.product?.slug}`}
+                href={slider?.product?.slug?.startsWith('/') ? slider.product.slug : `/products/${slider?.product?.slug}`}
                 className="inline-flex py-3 mt-10 font-semibold text-dark duration-200 ease-out rounded-lg text-custom-sm bg-blue px-9 hover:bg-blue-dark"
               >
                 Ver Producto

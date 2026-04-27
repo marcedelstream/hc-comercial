@@ -1,39 +1,62 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { staticProducts, staticCategories } from "@/data/staticData";
 import { formatPrice } from "@/utils/formatePrice";
+
+interface SearchProduct {
+  id: string
+  title: string
+  slug: string
+  categorySlug?: string
+  price: number
+  category: string
+  sku: string
+}
+
+interface SearchCategory {
+  id: number | string
+  title: string
+  slug: string
+}
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [showMobileInput, setShowMobileInput] = useState(false);
+  const [results, setResults] = useState<SearchProduct[]>([]);
+  const [categoryResults, setCategoryResults] = useState<SearchCategory[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const mobileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const router = useRouter();
 
-  const results = query.trim().length >= 2
-    ? staticProducts.filter((p) => {
-        const q = query.toLowerCase();
-        return (
-          p.title.toLowerCase().includes(q) ||
-          p.sku.toLowerCase().includes(q) ||
-          p.category.title.toLowerCase().includes(q) ||
-          p.tags.some((t) => t.toLowerCase().includes(q))
-        );
-      }).slice(0, 6)
-    : [];
+  const fetchResults = useCallback(async (q: string) => {
+    if (q.trim().length < 2) {
+      setResults([])
+      setCategoryResults([])
+      setIsOpen(false)
+      return
+    }
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`)
+      const data = await res.json()
+      setResults(data.products ?? [])
+      setCategoryResults(data.categories ?? [])
+      setIsOpen(true)
+    } catch {
+      setResults([])
+      setCategoryResults([])
+    }
+  }, [])
 
-  const categoryResults = query.trim().length >= 2
-    ? staticCategories.filter((c) =>
-        c.title.toLowerCase().includes(query.toLowerCase())
-      ).slice(0, 3)
-    : [];
-
-  const hasResults = results.length > 0 || categoryResults.length > 0;
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => fetchResults(query), 250)
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
+  }, [query, fetchResults])
 
   useEffect(() => {
     if (showMobileInput && mobileInputRef.current) {
@@ -69,7 +92,6 @@ const SearchBar = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
-    setIsOpen(e.target.value.trim().length >= 2);
   };
 
   const handleResultClick = () => {
@@ -77,6 +99,8 @@ const SearchBar = () => {
     setShowMobileInput(false);
     setQuery("");
   };
+
+  const hasResults = results.length > 0 || categoryResults.length > 0;
 
   const SearchIcon = () => (
     <svg width="17" height="17" viewBox="0 0 25 25" fill="currentColor" className="text-gray-5 shrink-0">
@@ -112,16 +136,16 @@ const SearchBar = () => {
               {results.map((product) => (
                 <Link
                   key={product.id}
-                  href={`/products/${product.slug}`}
+                  href={product.categorySlug ? `/${product.categorySlug}/${product.slug}` : `/products/${product.slug}`}
                   onClick={handleResultClick}
                   className="flex items-center justify-between gap-3 px-2 py-2 rounded-lg hover:bg-gray-1 transition-colors group"
                 >
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-dark group-hover:text-blue line-clamp-1">{product.title}</p>
-                    <p className="text-xs text-gray-5">{product.category.title} · SKU: {product.sku}</p>
+                    <p className="text-xs text-gray-5">{product.category}{product.sku ? ` · SKU: ${product.sku}` : ''}</p>
                   </div>
                   <span className="text-sm font-bold text-dark shrink-0">
-                    {formatPrice(product.discountedPrice ?? product.price)}
+                    {formatPrice(product.price)}
                   </span>
                 </Link>
               ))}
@@ -131,7 +155,7 @@ const SearchBar = () => {
       )}
       {isOpen && !hasResults && query.trim().length >= 2 && (
         <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-3 rounded-2xl shadow-md z-50 px-4 py-4 text-center">
-          <p className="text-sm text-dark-3">Sin resultados para <strong>"{query}"</strong></p>
+          <p className="text-sm text-dark-3">Sin resultados para <strong>&ldquo;{query}&rdquo;</strong></p>
         </div>
       )}
     </>
@@ -139,7 +163,7 @@ const SearchBar = () => {
 
   return (
     <div ref={containerRef} className="relative w-full">
-      {/* Desktop: input minimalista, full width */}
+      {/* Desktop */}
       <div className="hidden xl:flex items-center gap-2 border-b border-gray-3 py-1.5 w-full focus-within:border-blue transition-colors">
         <SearchIcon />
         <input
@@ -148,13 +172,13 @@ const SearchBar = () => {
           value={query}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          onFocus={() => query.trim().length >= 2 && setIsOpen(true)}
+          onFocus={() => hasResults && setIsOpen(true)}
           placeholder="Buscar por nombre, SKU o categoría..."
           className="bg-transparent text-sm text-dark placeholder-gray-5 outline-none w-full"
         />
       </div>
 
-      {/* Mobile: ícono → despliega input */}
+      {/* Mobile */}
       <div className="flex xl:hidden items-center">
         {showMobileInput ? (
           <div className="flex items-center gap-2 border-b border-gray-3 py-1.5 w-[160px] focus-within:border-blue transition-colors">
@@ -165,7 +189,7 @@ const SearchBar = () => {
               value={query}
               onChange={handleChange}
               onKeyDown={handleKeyDown}
-              onFocus={() => query.trim().length >= 2 && setIsOpen(true)}
+              onFocus={() => hasResults && setIsOpen(true)}
               placeholder="Buscar..."
               className="bg-transparent text-sm text-dark placeholder-gray-5 outline-none w-full"
             />

@@ -5,7 +5,6 @@ import {
 } from "@/assets/icons/social";
 import Image from "next/image";
 import Link from "next/link";
-import AccountLinks from "./AccountLinks";
 import FooterBottom from "./FooterBottom";
 import QuickLinks from "./QuickLinks";
 
@@ -83,7 +82,6 @@ const Footer = () => {
             </div>
           </div>
 
-          <AccountLinks />
           <QuickLinks />
 
           <div className="w-full sm:w-auto">

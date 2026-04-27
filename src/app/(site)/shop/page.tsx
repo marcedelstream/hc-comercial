@@ -1,4 +1,5 @@
-import { staticProducts, staticCategories } from "@/data/staticData";
+import { getProductsPaginated } from "@/get-api-data/product";
+import { getCategories } from "@/get-api-data/category";
 import { formatPrice } from "@/utils/formatePrice";
 import Link from "next/link";
 
@@ -7,17 +8,46 @@ export const metadata = {
   description: "Equipos gastronómicos de alta calidad. Freidoras, hornos, heladeras, batidoras y más.",
 };
 
+const LIMIT = 12;
+
+function buildUrl(
+  base: Record<string, string | undefined>,
+  overrides: Record<string, string | undefined>
+): string {
+  const merged = { ...base, ...overrides }
+  const p = new URLSearchParams()
+  for (const [k, v] of Object.entries(merged)) {
+    if (v !== undefined && v !== '') p.set(k, v)
+  }
+  const qs = p.toString()
+  return qs ? `/shop?${qs}` : '/shop'
+}
+
 export default async function ShopPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; sort?: string }>;
+  searchParams: Promise<{ category?: string; page?: string; minPrice?: string; maxPrice?: string; search?: string }>
 }) {
-  const { category } = await searchParams;
-  const allProducts = staticProducts;
-  const products = category
-    ? allProducts.filter((p) => p.category.slug === category)
-    : allProducts;
-  const categories = staticCategories;
+  const params    = await searchParams
+  const category  = params.category
+  const page      = Math.max(1, parseInt(params.page ?? '1') || 1)
+  const minPrice  = params.minPrice ? parseInt(params.minPrice) : undefined
+  const maxPrice  = params.maxPrice ? parseInt(params.maxPrice) : undefined
+  const search    = params.search?.trim() || undefined
+
+  const [{ products, total }, categories] = await Promise.all([
+    getProductsPaginated({ page, limit: LIMIT, category, minPrice, maxPrice, search }),
+    getCategories(),
+  ])
+
+  const totalPages = Math.ceil(total / LIMIT)
+
+  const baseParams: Record<string, string | undefined> = {
+    category,
+    minPrice:  minPrice  !== undefined ? String(minPrice)  : undefined,
+    maxPrice:  maxPrice  !== undefined ? String(maxPrice)  : undefined,
+    search,
+  }
 
   return (
     <main className="pt-8 pb-20">
@@ -26,47 +56,91 @@ export default async function ShopPage({
         <div className="mb-10">
           <h1 className="text-3xl font-bold text-dark mb-2">Equipos Gastronómicos</h1>
           <p className="text-dark-3">
-            {products.length} {products.length === 1 ? "producto" : "productos"} disponibles · Todos con garantía y envío a todo el Paraguay
+            {total} {total === 1 ? "producto" : "productos"} disponibles · Todos con garantía y envío a todo el Paraguay
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar categorías */}
-          <div className="lg:col-span-1">
-            <div className="bg-white border border-gray-3 rounded-2xl p-5 sticky top-28">
-              <h2 className="text-base font-semibold text-dark mb-4">Categorías</h2>
-              <ul className="space-y-2">
-                <li>
-                  <Link
-                    href="/shop"
-                    className={`block text-sm py-1.5 px-3 rounded-lg transition-colors ${!category ? "text-blue font-semibold bg-gray-1" : "text-dark-3 hover:text-blue hover:bg-gray-1"}`}
-                  >
-                    Todos los productos ({allProducts.length})
-                  </Link>
-                </li>
-                {categories.map((cat) => {
-                  const count = allProducts.filter(
-                    (p) => p.category.slug === cat.slug
-                  ).length;
-                  const isActive = category === cat.slug;
-                  return (
-                    <li key={cat.id}>
-                      <Link
-                        href={`/shop?category=${cat.slug}`}
-                        className={`flex justify-between items-center text-sm py-1.5 px-3 rounded-lg transition-colors ${isActive ? "text-blue font-semibold bg-gray-1" : "text-dark-3 hover:text-blue hover:bg-gray-1"}`}
-                      >
-                        <span>{cat.title}</span>
-                        <span className="text-xs text-gray-5 bg-gray-2 px-2 py-0.5 rounded-full">
-                          {count}
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+          {/* Sidebar */}
+          <aside className="lg:col-span-1">
+            <div className="bg-white border border-gray-3 rounded-2xl p-5 sticky top-28 space-y-6">
+              {/* Categorías */}
+              <div>
+                <h2 className="text-base font-semibold text-dark mb-4">Categorías</h2>
+                <ul className="space-y-1">
+                  <li>
+                    <Link
+                      href={buildUrl(baseParams, { category: undefined, page: undefined })}
+                      className={`block text-sm py-1.5 px-3 rounded-lg transition-colors ${!category ? "text-blue font-semibold bg-gray-1" : "text-dark-3 hover:text-blue hover:bg-gray-1"}`}
+                    >
+                      Todos los productos
+                    </Link>
+                  </li>
+                  {categories.map((cat) => {
+                    const isActive = category === cat.slug
+                    return (
+                      <li key={cat.id}>
+                        <Link
+                          href={buildUrl(baseParams, { category: cat.slug, page: undefined })}
+                          className={`flex justify-between items-center text-sm py-1.5 px-3 rounded-lg transition-colors ${isActive ? "text-blue font-semibold bg-gray-1" : "text-dark-3 hover:text-blue hover:bg-gray-1"}`}
+                        >
+                          <span className="truncate">{cat.title}</span>
+                        </Link>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
 
-              <div className="mt-6 pt-4 border-t border-gray-3">
-                <h2 className="text-base font-semibold text-dark mb-4">¿Necesitás asesoramiento?</h2>
+              {/* Filtro de precio */}
+              <div className="border-t border-gray-3 pt-5">
+                <h2 className="text-base font-semibold text-dark mb-4">Precio</h2>
+                <form method="GET" action="/shop">
+                  {category && <input type="hidden" name="category" value={category} />}
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-dark-3 mb-1">Mínimo (₲)</label>
+                      <input
+                        type="number"
+                        name="minPrice"
+                        defaultValue={minPrice}
+                        placeholder="0"
+                        min={0}
+                        className="w-full border border-gray-3 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-blue"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-dark-3 mb-1">Máximo (₲)</label>
+                      <input
+                        type="number"
+                        name="maxPrice"
+                        defaultValue={maxPrice}
+                        placeholder="Sin límite"
+                        min={0}
+                        className="w-full border border-gray-3 rounded-lg px-3 py-2 text-sm text-dark focus:outline-none focus:border-blue"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full py-2 bg-blue text-dark text-sm font-semibold rounded-lg hover:bg-blue-dark ease-out duration-200"
+                    >
+                      Aplicar filtro
+                    </button>
+                    {(minPrice !== undefined || maxPrice !== undefined) && (
+                      <Link
+                        href={buildUrl(baseParams, { minPrice: undefined, maxPrice: undefined, page: undefined })}
+                        className="block text-center text-xs text-dark-3 hover:text-blue"
+                      >
+                        Limpiar filtro de precio
+                      </Link>
+                    )}
+                  </div>
+                </form>
+              </div>
+
+              {/* WhatsApp */}
+              <div className="border-t border-gray-3 pt-5">
+                <h2 className="text-base font-semibold text-dark mb-3">¿Necesitás asesoramiento?</h2>
                 <Link
                   href="https://wa.me/595982800258"
                   target="_blank"
@@ -80,63 +154,107 @@ export default async function ShopPage({
                 </Link>
               </div>
             </div>
-          </div>
+          </aside>
 
           {/* Grid de productos */}
           <div className="lg:col-span-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-              {products.map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/products/${product.slug}`}
-                  className="group block border border-gray-3 rounded-2xl overflow-hidden hover:border-blue hover:shadow-2 transition-all duration-200"
-                >
-                  {/* Imagen placeholder */}
-                  <div className="bg-gray-2 flex flex-col items-center justify-center h-[200px] relative">
-                    <svg className="text-gray-4 mb-2" width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <span className="text-gray-5 text-sm">Sin imagen</span>
-                    {product.discountedPrice && (
-                      <span className="absolute top-3 right-3 px-2 py-1 text-xs font-bold text-dark bg-blue rounded-full">
-                        {Math.round(((product.price - product.discountedPrice) / product.price) * 100)}% OFF
-                      </span>
-                    )}
-                    {product.quantity < 1 && (
-                      <span className="absolute top-3 left-3 px-2 py-1 text-xs font-medium text-white bg-red rounded-full">
-                        Sin stock
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Info */}
-                  <div className="p-4">
-                    <p className="text-xs text-blue font-medium uppercase mb-1">
-                      {product.category.title}
-                    </p>
-                    <h3 className="text-sm font-semibold text-dark group-hover:text-blue line-clamp-2 mb-2 transition-colors">
-                      {product.title}
-                    </h3>
-                    <p className="text-xs text-dark-3 line-clamp-2 mb-3">
-                      {product.shortDescription}
-                    </p>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-base font-bold text-dark">
-                        {formatPrice(product.discountedPrice ?? product.price)}
-                      </span>
-                      {product.discountedPrice && (
-                        <span className="text-xs line-through text-dark-4">
-                          {formatPrice(product.price)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
+            {products.length === 0 ? (
+              <div className="text-center py-20">
+                <p className="text-lg font-medium text-dark mb-2">Sin resultados</p>
+                <p className="text-sm text-dark-3 mb-5">No se encontraron productos con los filtros seleccionados.</p>
+                <Link href="/shop" className="text-sm font-semibold text-blue hover:underline">
+                  Ver todos los productos
                 </Link>
-              ))}
-            </div>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {products.map((product) => {
+                    const imgUrl = product.productVariants?.[0]?.image
+                    const price  = product.discountedPrice ?? product.price
+                    return (
+                      <Link
+                        key={product.id}
+                        href={`/${product.category.slug}/${product.slug}`}
+                        className="group block border border-gray-3 rounded-2xl overflow-hidden hover:border-blue hover:shadow-2 transition-all duration-200"
+                      >
+                        <div className="bg-gray-2 flex flex-col items-center justify-center h-[200px] relative overflow-hidden">
+                          {imgUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={imgUrl} alt={product.title} className="w-full h-full object-contain p-3" />
+                          ) : (
+                            <>
+                              <svg className="text-gray-4 mb-2" width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              <span className="text-gray-5 text-sm">Sin imagen</span>
+                            </>
+                          )}
+                          {product.discountedPrice && (
+                            <span className="absolute top-3 right-3 px-2 py-1 text-xs font-bold text-dark bg-blue rounded-full">
+                              {Math.round(((product.price - product.discountedPrice) / product.price) * 100)}% OFF
+                            </span>
+                          )}
+                          {product.quantity < 1 && (
+                            <span className="absolute top-3 left-3 px-2 py-1 text-xs font-medium text-white bg-red rounded-full">
+                              Sin stock
+                            </span>
+                          )}
+                        </div>
+                        <div className="p-4">
+                          <p className="text-xs text-blue font-medium uppercase mb-1">
+                            {product.category.title}
+                          </p>
+                          <h3 className="text-sm font-semibold text-dark group-hover:text-blue line-clamp-2 mb-2 transition-colors">
+                            {product.title}
+                          </h3>
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-base font-bold text-dark">{formatPrice(price)}</span>
+                            {product.discountedPrice && (
+                              <span className="text-xs line-through text-dark-4">{formatPrice(product.price)}</span>
+                            )}
+                          </div>
+                        </div>
+                      </Link>
+                    )
+                  })}
+                </div>
+
+                {/* Paginación */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between mt-10 pt-6 border-t border-gray-3">
+                    <Link
+                      href={page > 1 ? buildUrl(baseParams, { page: String(page - 1) }) : '#'}
+                      aria-disabled={page <= 1}
+                      className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                        page <= 1
+                          ? 'border-gray-3 text-gray-4 pointer-events-none'
+                          : 'border-gray-3 text-dark hover:border-blue hover:text-blue'
+                      }`}
+                    >
+                      ← Anterior
+                    </Link>
+                    <span className="text-sm text-dark-3">
+                      Página <strong className="text-dark">{page}</strong> de <strong className="text-dark">{totalPages}</strong>
+                    </span>
+                    <Link
+                      href={page < totalPages ? buildUrl(baseParams, { page: String(page + 1) }) : '#'}
+                      aria-disabled={page >= totalPages}
+                      className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                        page >= totalPages
+                          ? 'border-gray-3 text-gray-4 pointer-events-none'
+                          : 'border-gray-3 text-dark hover:border-blue hover:text-blue'
+                      }`}
+                    >
+                      Siguiente →
+                    </Link>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
     </main>
-  );
+  )
 }

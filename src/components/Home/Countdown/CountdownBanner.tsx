@@ -9,6 +9,8 @@ interface CountdownBannerProps {
 const CountdownBanner = ({ data }: CountdownBannerProps) => {
   if (!data) return null;
 
+  const productHref = data?.product?.href ?? null;
+
   return (
     <section className="py-20 overflow-hidden">
       <div className="w-full px-4 mx-auto max-w-7xl sm:px-8 xl:px-0">
@@ -21,14 +23,23 @@ const CountdownBanner = ({ data }: CountdownBannerProps) => {
             <h2 className="mb-3 text-xl font-semibold text-white lg:text-heading-4 xl:text-heading-3">
               {data.title}
             </h2>
-            <p className="text-base font-normal text-gray-4">
-              {data?.product?.title}
-            </p>
 
-            <CountdownTimer />
+            {data?.product?.title && (
+              productHref ? (
+                <Link href={productHref} className="text-base font-normal text-gray-4 hover:text-blue">
+                  {data.product.title}
+                </Link>
+              ) : (
+                <p className="text-base font-normal text-gray-4">
+                  {data.product.title}
+                </p>
+              )
+            )}
+
+            <CountdownTimer targetDate={data?.endDate} />
 
             <Link
-              href="/shop"
+              href={productHref ?? '/shop'}
               className="inline-flex font-semibold text-custom-sm text-dark bg-blue py-3 px-9.5 rounded-lg ease-out duration-200 hover:bg-blue-dark mt-8"
             >
               ¡Ver oferta!

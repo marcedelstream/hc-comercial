@@ -1,16 +1,22 @@
-import { staticHeroBanners, staticHeroSliders } from "@/data/staticData";
+import { staticHeroBanners, staticHeroSliders } from '@/data/staticData'
+import { getHeroBannersFromDB, getHeroSlidersFromDB } from '@/lib/storefront-data'
 
-// get hero banners
+const useDB = !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
+              process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== 'REEMPLAZAR_CON_ANON_KEY'
+
 export const getHeroBanners = async () => {
-  return staticHeroBanners;
-};
+  if (!useDB) return staticHeroBanners
+  const banners = await getHeroBannersFromDB()
+  return banners.length > 0 ? banners : staticHeroBanners
+}
 
-// get hero sliders
 export const getHeroSliders = async () => {
-  return staticHeroSliders;
-};
+  if (!useDB) return staticHeroSliders
+  const sliders = await getHeroSlidersFromDB()
+  return sliders.length > 0 ? sliders : staticHeroSliders
+}
 
-// single hero banner
 export const getSingleHeroBanner = async (id: number) => {
-  return staticHeroBanners.find((b) => b.id === id) ?? null;
-};
+  const banners = await getHeroBanners()
+  return banners.find((b) => b.id === id) ?? null
+}

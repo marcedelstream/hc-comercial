@@ -106,8 +106,10 @@ const MainHeader = ({ headerData }: IProps) => {
         </div>
 
         {/* Ticker/marquee — debajo del área de navegación */}
-        <div className="bg-blue py-1.5 overflow-hidden">
+        <div className="bg-blue py-1.5 overflow-hidden w-full">
           <div className="ticker-animate text-xs font-semibold text-dark">
+            <span>{tickerContent}</span>
+            <span>{tickerContent}</span>
             <span>{tickerContent}</span>
             <span>{tickerContent}</span>
           </div>

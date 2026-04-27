@@ -14,8 +14,8 @@ const featureData = [
   },
   {
     img: "/images/icons/icon-03.svg",
-    title: "Pago con Bancard",
-    description: "Pago simulado en esta demo",
+    title: "Pago Online",
+    description: "Elegí tu forma de pago preferida",
   },
   {
     img: "/images/icons/icon-04.svg",

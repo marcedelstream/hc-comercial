@@ -9,7 +9,7 @@ export interface TimeState {
   seconds: number;
 }
 
-export const CountdownTimer = () => {
+export const CountdownTimer = ({ targetDate }: { targetDate?: string }) => {
   const [date, setDate] = useState<TimeState>({
     days: 0,
     hours: 0,
@@ -18,7 +18,8 @@ export const CountdownTimer = () => {
   });
 
   const getTime = () => {
-    const time = Date.parse(getSevenDaysFromToday()) - Date.now();
+    const target = targetDate ? new Date(targetDate).getTime() : Date.parse(getSevenDaysFromToday())
+    const time = Math.max(0, target - Date.now());
 
     setDate({
       days: Math.floor(time / (1000 * 60 * 60 * 24)),
@@ -35,10 +36,10 @@ export const CountdownTimer = () => {
 
   return (
     <div className="flex flex-wrap gap-6 mt-6">
-      <TimeDisplay value={date.days} label="Days" />
-      <TimeDisplay value={date.hours} label="Hours" />
-      <TimeDisplay value={date.minutes} label="Minutes" />
-      <TimeDisplay value={date.seconds} label="Seconds" />
+      <TimeDisplay value={date.days} label="Días" />
+      <TimeDisplay value={date.hours} label="Horas" />
+      <TimeDisplay value={date.minutes} label="Minutos" />
+      <TimeDisplay value={date.seconds} label="Segundos" />
     </div>
   );
 }; 

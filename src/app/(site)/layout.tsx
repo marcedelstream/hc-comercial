@@ -6,8 +6,6 @@ import Providers from "./Providers";
 import NextTopLoader from "nextjs-toploader";
 import MainHeader from "@/components/Header/MainHeader";
 import { getHeaderSettings } from "@/get-api-data/header-setting";
-import Breadcrumb from "@/components/Common/Breadcrumb";
-
 export default async function SiteLayout({
   children,
 }: {
@@ -26,9 +24,8 @@ export default async function SiteLayout({
             shadow="none"
           />
           <MainHeader headerData={headerSettingData} />
-          <Breadcrumb />
           <Toaster position="top-center" reverseOrder={false} />
-          {children}
+          <main className="pt-28">{children}</main>
         </Providers>
 
         <ScrollToTop />

@@ -3,13 +3,18 @@
 @import "tailwindcss";
 
 @keyframes ticker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-25%); }
 }
 .ticker-animate {
-  animation: ticker 22s linear infinite;
-  display: inline-block;
+  display: flex;
+  width: max-content;
+  animation: ticker 30s linear infinite;
+  will-change: transform;
+}
+.ticker-animate span {
   white-space: nowrap;
+  padding-right: 4rem;
 }
 @plugin "@tailwindcss/typography";
 @plugin "@tailwindcss/forms";
@@ -46,6 +51,8 @@
   --color-gray-5: #9ca3af;
   --color-gray-6: #6b7280;
   --color-gray-7: #374151;
+  --color-gray-8: #1f2937;
+  --color-gray-9: #111827;
   --color-gray: #f3f5f6;
 
   --color-blue: #eeec00;

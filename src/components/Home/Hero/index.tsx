@@ -7,7 +7,7 @@ const Hero = async () => {
   const sliders = await getHeroSliders();
 
   return (
-    <section className="overflow-hidden pb-12 pt-40 bg-[#F7F7F7] ">
+    <section className="overflow-hidden py-12 bg-[#F7F7F7]">
       <div className="w-full px-4 mx-auto max-w-7xl sm:px-8 xl:px-0">
         <div className="grid grid-cols-1 gap-5 xl:grid-cols-4 xl:items-stretch">
           <div className="w-full xl:col-span-3">
