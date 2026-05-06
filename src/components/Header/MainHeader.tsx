@@ -13,14 +13,18 @@ type IProps = {
   headerData?: any | null;
 };
 
-const TICKER_MSG1 = "\u00a0\u00a0\u00a0🚚 Envíos a todo el Paraguay · WhatsApp: +595982800258\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0";
-const TICKER_MSG2 = "🎁 Envíos gratis desde Gs. 1.000.000\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0";
-const TICKER_FULL = TICKER_MSG1 + TICKER_MSG2;
+const TICKER_MSGS = [
+  "🚚 Envíos a todo el Paraguay",
+  "🎁 Envíos gratis desde Gs. 1.000.000",
+  "📞 WhatsApp: +595982800258",
+];
 
 const MainHeader = ({ headerData }: IProps) => {
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
   const { handleCartClick, cartCount } = useCart();
+  const [tickerIdx, setTickerIdx] = useState(0);
+  const [tickerVisible, setTickerVisible] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => setStickyMenu(window.scrollY >= 80);
@@ -36,9 +40,19 @@ const MainHeader = ({ headerData }: IProps) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const tickerContent = headerData?.headerText
-    ? `${headerData.headerText}\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0`
-    : TICKER_FULL;
+  const msgs = headerData?.headerText ? [headerData.headerText] : TICKER_MSGS;
+
+  useEffect(() => {
+    if (msgs.length <= 1) return;
+    const timer = setInterval(() => {
+      setTickerVisible(false);
+      setTimeout(() => {
+        setTickerIdx((i) => (i + 1) % msgs.length);
+        setTickerVisible(true);
+      }, 300);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [msgs.length]);
 
   return (
     <>
@@ -55,9 +69,9 @@ const MainHeader = ({ headerData }: IProps) => {
               <Image
                 src="/hc-comercial-logo.png"
                 alt="HC COMERCIAL"
-                width={130}
-                height={85}
-                className="h-12 w-auto object-contain"
+                width={170}
+                height={110}
+                className="h-16 w-auto object-contain"
                 priority
               />
             </Link>
@@ -83,19 +97,19 @@ const MainHeader = ({ headerData }: IProps) => {
             </div>
 
             {/* Mobile: carrito + hamburger */}
-            <div className="flex xl:hidden items-center gap-3">
+            <div className="flex xl:hidden items-center gap-2 pr-1">
               <button
-                className="relative text-gray-700 transition hover:text-blue focus:outline-none"
+                className="relative text-gray-700 transition hover:text-blue focus:outline-none p-1.5"
                 onClick={handleCartClick}
                 aria-label="Carrito"
               >
                 <CartIcon />
-                <span className="absolute -top-1.5 -right-1.5 w-[18px] h-[18px] text-dark bg-blue text-[10px] font-bold rounded-full inline-flex items-center justify-center">
+                <span className="absolute top-0 right-0 w-[18px] h-[18px] text-dark bg-blue text-[10px] font-bold rounded-full inline-flex items-center justify-center">
                   {cartCount || 0}
                 </span>
               </button>
               <button
-                className="transition focus:outline-none"
+                className="transition focus:outline-none p-1.5"
                 onClick={() => setNavigationOpen(!navigationOpen)}
                 aria-label={navigationOpen ? "Cerrar menú" : "Abrir menú"}
               >
@@ -105,14 +119,15 @@ const MainHeader = ({ headerData }: IProps) => {
           </div>
         </div>
 
-        {/* Ticker/marquee — debajo del área de navegación */}
-        <div className="bg-blue py-1.5 overflow-hidden w-full">
-          <div className="ticker-animate text-xs font-semibold text-dark">
-            <span>{tickerContent}</span>
-            <span>{tickerContent}</span>
-            <span>{tickerContent}</span>
-            <span>{tickerContent}</span>
-          </div>
+        {/* Ticker — barra de mensajes rotativos */}
+        <div className="bg-blue py-1.5 w-full">
+          <p
+            className={`text-xs font-semibold text-dark text-center transition-opacity duration-300 ${
+              tickerVisible ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            {msgs[tickerIdx]}
+          </p>
         </div>
       </header>
 

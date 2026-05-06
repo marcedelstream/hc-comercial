@@ -15,7 +15,6 @@ export default async function ProductoEditPage({ params }: { params: Promise<{ i
 
   const cat = p.categories as unknown as { id: number; name: string } | null
   const images = (p.images as string[]) ?? []
-  const currentImage = images[0] ?? ''
 
   return (
     <div className="p-8 max-w-2xl">
@@ -27,10 +26,10 @@ export default async function ProductoEditPage({ params }: { params: Promise<{ i
         <h1 className="text-lg font-bold text-dark truncate">{p.name}</h1>
       </div>
 
-      {/* Foto del producto */}
+      {/* Fotos del producto */}
       <div className="bg-white rounded-xl shadow-1 border border-gray-3 p-6 mb-6">
-        <p className="text-xs font-semibold text-dark-4 uppercase tracking-wide mb-4">Foto del producto</p>
-        <ProductImageUpload productId={p.id} currentImage={currentImage} />
+        <p className="text-xs font-semibold text-dark-4 uppercase tracking-wide mb-4">Fotos del producto</p>
+        <ProductImageUpload productId={p.id} images={images} />
       </div>
 
       {/* Datos de AsCont (solo lectura) */}

@@ -2,20 +2,6 @@
 
 @import "tailwindcss";
 
-@keyframes ticker {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-25%); }
-}
-.ticker-animate {
-  display: flex;
-  width: max-content;
-  animation: ticker 30s linear infinite;
-  will-change: transform;
-}
-.ticker-animate span {
-  white-space: nowrap;
-  padding-right: 4rem;
-}
 @plugin "@tailwindcss/typography";
 @plugin "@tailwindcss/forms";
 
