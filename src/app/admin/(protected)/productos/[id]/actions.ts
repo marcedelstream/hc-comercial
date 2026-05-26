@@ -19,6 +19,27 @@ export async function updateProductAction(id: number, formData: FormData) {
   revalidatePath(`/admin/productos/${id}`)
 }
 
+async function revalidateProductImagePaths(id: number) {
+  const { data: product } = await supabaseAdmin
+    .from('products')
+    .select('slug, categories(slug)')
+    .eq('id', id)
+    .single()
+
+  revalidatePath(`/admin/productos/${id}`)
+  revalidatePath('/')
+  revalidatePath('/shop')
+
+  if (!product?.slug) return
+
+  revalidatePath(`/products/${product.slug}`)
+
+  const category = product.categories as { slug?: string } | null
+  if (category?.slug) {
+    revalidatePath(`/${category.slug}/${product.slug}`)
+  }
+}
+
 export async function addProductImageAction(id: number, imageUrl: string) {
   const { data: p } = await supabaseAdmin.from('products').select('images').eq('id', id).single()
   const current = (p?.images as string[]) ?? []
@@ -26,8 +47,7 @@ export async function addProductImageAction(id: number, imageUrl: string) {
     images:     [...current, imageUrl],
     updated_at: new Date().toISOString(),
   }).eq('id', id)
-  revalidatePath(`/admin/productos/${id}`)
-  revalidatePath('/')
+  await revalidateProductImagePaths(id)
 }
 
 export async function removeProductImageAction(id: number, imageUrl: string) {
@@ -37,6 +57,5 @@ export async function removeProductImageAction(id: number, imageUrl: string) {
     images:     current.filter(img => img !== imageUrl),
     updated_at: new Date().toISOString(),
   }).eq('id', id)
-  revalidatePath(`/admin/productos/${id}`)
-  revalidatePath('/')
+  await revalidateProductImagePaths(id)
 }

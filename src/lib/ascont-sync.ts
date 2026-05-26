@@ -51,6 +51,62 @@ function todayStr(): string {
   return `${dd}-${mm}-${yyyy}`
 }
 
+function normalizeBaseUrl(baseUrl: string): string {
+  const trimmed = baseUrl.trim().replace(/\/+$/, '')
+  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+}
+
+function ascontUrl(baseUrl: string, pathname: string, params: Record<string, string>): string {
+  const url = new URL(pathname, `${normalizeBaseUrl(baseUrl)}/`)
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.set(key, value)
+  }
+  return url.toString()
+}
+
+function getFetchErrorMessage(error: unknown, url: string): string {
+  if (!(error instanceof Error)) return String(error)
+
+  const cause = error.cause as
+    | { code?: string; errno?: string | number; syscall?: string; hostname?: string; address?: string; port?: number }
+    | undefined
+
+  const details = [
+    error.message,
+    cause?.code && `code=${cause.code}`,
+    cause?.syscall && `syscall=${cause.syscall}`,
+    cause?.hostname && `host=${cause.hostname}`,
+    cause?.address && `address=${cause.address}`,
+    cause?.port && `port=${cause.port}`,
+  ].filter(Boolean)
+
+  let hint = ''
+  if (cause?.code === 'ENOTFOUND') {
+    hint = ' Verifica que ASCONT_BASE_URL este bien escrito y que el dominio del tunnel exista.'
+  } else if (cause?.code === 'ECONNREFUSED' || cause?.code === 'UND_ERR_CONNECT_TIMEOUT') {
+    hint = ' Verifica que el Cloudflare Tunnel/servidor de AsCont este activo y accesible.'
+  } else if (cause?.code?.includes('CERT') || cause?.code === 'DEPTH_ZERO_SELF_SIGNED_CERT') {
+    hint = ' Verifica el certificado SSL del endpoint configurado.'
+  }
+
+  return `${details.join(' - ')}. URL: ${url}.${hint}`
+}
+
+async function fetchAscontJson<T>(url: string): Promise<T> {
+  const res = await fetch(url, {
+    cache: 'no-store',
+    signal: AbortSignal.timeout(30000),
+  })
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    const preview = body ? ` - ${body.slice(0, 300)}` : ''
+    throw new Error(`HTTP ${res.status}${preview}`)
+  }
+
+  return res.json() as Promise<T>
+}
+
 export async function fullSync(): Promise<{
   ok: boolean
   categories: number
@@ -66,12 +122,11 @@ export async function fullSync(): Promise<{
   // ── 1. Fetch precios (fuente primaria — filtra productos sin precio configurado) ──
   let priceItems: PriceItem[]
   try {
-    const url = `${baseUrl}/movil/precioapi/precios/?empId=${empId}&lprId=${lprId}`
-    const res  = await fetch(url, { cache: 'no-store' })
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    priceItems = await res.json()
+    const url = ascontUrl(baseUrl, '/movil/precioapi/precios/', { empId, lprId })
+    priceItems = await fetchAscontJson<PriceItem[]>(url)
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e)
+    const url = ascontUrl(baseUrl, '/movil/precioapi/precios/', { empId, lprId })
+    const msg = getFetchErrorMessage(e, url)
     return { ok: false, categories: 0, products: 0, error: `Error fetching precios: ${msg}` }
   }
 
@@ -85,14 +140,11 @@ export async function fullSync(): Promise<{
   // ── 2. Fetch stock (fuente secundaria — suma por depósito) ────
   const stockMap = new Map<number, number>()
   try {
-    const url = `${baseUrl}/movil/stockapi/stockgeneral/?empId=${empId}&fechaHasta=${todayStr()}`
-    const res  = await fetch(url, { cache: 'no-store' })
-    if (res.ok) {
-      const stockItems: StockItem[] = await res.json()
-      if (Array.isArray(stockItems)) {
-        for (const item of stockItems) {
-          stockMap.set(item.prsIde, (stockMap.get(item.prsIde) ?? 0) + item.unidades)
-        }
+    const url = ascontUrl(baseUrl, '/movil/stockapi/stockgeneral/', { empId, fechaHasta: todayStr() })
+    const stockItems = await fetchAscontJson<StockItem[]>(url)
+    if (Array.isArray(stockItems)) {
+      for (const item of stockItems) {
+        stockMap.set(item.prsIde, (stockMap.get(item.prsIde) ?? 0) + item.unidades)
       }
     }
   } catch {

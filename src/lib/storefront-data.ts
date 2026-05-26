@@ -5,7 +5,21 @@ import type { StaticProduct, StaticCategory, StaticHeroSlider, StaticHeroBanner 
 
 function mapProduct(p: Record<string, unknown>): StaticProduct {
   const cat = p.categories as { name: string; slug: string } | null
-  const images = (p.images as string[]) ?? []
+  const images = ((p.images as string[]) ?? []).filter(Boolean)
+  const productVariants = images.length > 0
+    ? images.map((image, index) => ({
+        image,
+        color:     '',
+        size:      '',
+        isDefault: index === 0,
+      }))
+    : [{
+        image:     '',
+        color:     '',
+        size:      '',
+        isDefault: true,
+      }]
+
   return {
     id:               String(p.id),
     title:            String(p.name ?? ''),
@@ -20,12 +34,7 @@ function mapProduct(p: Record<string, unknown>): StaticProduct {
       title: cat?.name  ?? '',
       slug:  cat?.slug  ?? '',
     },
-    productVariants: [{
-      image:     images[0] ?? '',
-      color:     '',
-      size:      '',
-      isDefault: true,
-    }],
+    productVariants,
     reviews:              0,
     tags:                 (p.tags as string[]) ?? [],
     offers:               [],
