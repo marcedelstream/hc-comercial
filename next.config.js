@@ -15,6 +15,12 @@ const nextConfig = {
         protocol: "https",
         hostname: "res.cloudinary.com",
       },
+      {
+        // Supabase Storage — imágenes de productos
+        protocol: "https",
+        hostname: "errpomonhkqtakidtblp.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
     ],
   },
   redirects: async () => {

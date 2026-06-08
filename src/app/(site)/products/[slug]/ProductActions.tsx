@@ -12,12 +12,16 @@ export default function ProductActions({ product }: { product: StaticProduct }) 
 
   const isAlreadyAdded = Object.values(cartDetails ?? {}).some((c) => c.id === product.id);
 
+  const featuredImage = product.productVariants?.find((v) => v.isDefault)?.image
+    || product.productVariants?.[0]?.image
+    || "";
+
   const cartItem = {
     id: product.id,
     name: product.title,
     price: product.discountedPrice ?? product.price,
     currency: "pyg",
-    image: "",
+    image: featuredImage,
     slug: product.slug,
     availableQuantity: product.quantity,
     color: "",

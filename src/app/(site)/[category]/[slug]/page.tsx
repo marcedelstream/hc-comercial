@@ -17,7 +17,10 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
 
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hc-comercial.vercel.app'
   const canonicalUrl = `${SITE_URL}/${product.category.slug}/${product.slug}`
-  const firstImage = product.productVariants?.[0]?.image ?? null
+  const firstImage =
+    product.productVariants?.find((v) => v.isDefault)?.image ||
+    product.productVariants?.[0]?.image ||
+    null
 
   const description = product.shortDescription ||
     `Comprá ${product.title} en HC COMERCIAL. Equipos gastronómicos de calidad con envío a todo Paraguay.`
@@ -65,7 +68,10 @@ export default async function ProductPage({ params }: { params: Promise<{ catego
 
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hc-comercial.vercel.app'
   const canonicalUrl = `${SITE_URL}/${product.category.slug}/${product.slug}`
-  const firstImage = product.productVariants?.[0]?.image ?? null
+  const firstImage =
+    product.productVariants?.find((v) => v.isDefault)?.image ||
+    product.productVariants?.[0]?.image ||
+    null
 
   const jsonLd = {
     '@context': 'https://schema.org',
