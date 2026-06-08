@@ -11,21 +11,61 @@ const dm_sans = DM_Sans({
 })
 
 export async function generateMetadata(): Promise<Metadata> {
-  const seoSettings = await getSeoSettings();
-  const site_name = await getSiteName();
+  const seoSettings = await getSeoSettings()
+  const site_name = await getSiteName()
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hc-comercial.vercel.app'
+
+  const title = seoSettings?.siteTitle
+    ? `${seoSettings.siteTitle} | ${site_name}`
+    : 'HC COMERCIAL — Equipos Gastronómicos Paraguay'
+
+  const description = seoSettings?.metadescription ||
+    'Venta de equipos gastronómicos en Paraguay. Hornos, freidoras, heladeras comerciales y más. Envío a todo el país.'
+
+  const keywords = seoSettings?.metaKeywords ||
+    'equipos gastronómicos Paraguay, hornos industriales, freidoras, cocinas industriales, HC COMERCIAL'
+
   return {
-    title: `${seoSettings?.siteTitle || "Home Page"} | ${site_name}`,
-    description: seoSettings?.metadescription || "Cozy-commerce is a next.js e-commerce boilerplate built with nextjs, typescript, tailwindcss, and prisma.",
-    keywords: seoSettings?.metaKeywords || "e-commerce, online store",
+    title,
+    description,
+    keywords,
+    metadataBase: new URL(SITE_URL),
+    alternates: {
+      canonical: SITE_URL,
+    },
     openGraph: {
+      title,
+      description,
+      url: SITE_URL,
+      siteName: site_name || 'HC COMERCIAL',
+      locale: 'es_PY',
+      type: 'website',
+      images: seoSettings?.metaImage
+        ? [{ url: seoSettings.metaImage, width: 1200, height: 630, alt: title }]
+        : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
       images: seoSettings?.metaImage ? [seoSettings.metaImage] : [],
     },
-    icons: {
-      icon: "/hc-comercial-logo.png",
-      shortcut: "/hc-comercial-logo.png",
-      apple: "/hc-comercial-logo.png",
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
     },
-  };
+    icons: {
+      icon: '/hc-comercial-logo.png',
+      shortcut: '/hc-comercial-logo.png',
+      apple: '/hc-comercial-logo.png',
+    },
+  }
 }
 
 export default async function RootLayout({

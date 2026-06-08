@@ -11,13 +11,41 @@ import Link from "next/link";
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string; slug: string }> }) {
-  const { slug } = await params;
-  const product = await getProductBySlug(slug);
-  if (!product) return { title: "Producto no encontrado | HC COMERCIAL" };
+  const { slug } = await params
+  const product = await getProductBySlug(slug)
+  if (!product) return { title: 'Producto no encontrado | HC COMERCIAL' }
+
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hc-comercial.vercel.app'
+  const canonicalUrl = `${SITE_URL}/${product.category.slug}/${product.slug}`
+  const firstImage = product.productVariants?.[0]?.image ?? null
+
+  const description = product.shortDescription ||
+    `Comprá ${product.title} en HC COMERCIAL. Equipos gastronómicos de calidad con envío a todo Paraguay.`
+
   return {
     title: `${product.title} | HC COMERCIAL`,
-    description: product.shortDescription,
-  };
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${product.title} | HC COMERCIAL`,
+      description,
+      url: canonicalUrl,
+      siteName: 'HC COMERCIAL',
+      locale: 'es_PY',
+      type: 'website',
+      images: firstImage
+        ? [{ url: firstImage, width: 800, height: 800, alt: product.title }]
+        : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${product.title} | HC COMERCIAL`,
+      description,
+      images: firstImage ? [firstImage] : [],
+    },
+  }
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ category: string; slug: string }> }) {
@@ -35,9 +63,50 @@ export default async function ProductPage({ params }: { params: Promise<{ catego
 
   const productImages = (product.productVariants ?? []).map((v) => v.image);
 
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hc-comercial.vercel.app'
+  const canonicalUrl = `${SITE_URL}/${product.category.slug}/${product.slug}`
+  const firstImage = product.productVariants?.[0]?.image ?? null
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    description: product.shortDescription || product.title,
+    sku: product.sku,
+    image: firstImage ? [firstImage] : [],
+    url: canonicalUrl,
+    brand: {
+      '@type': 'Brand',
+      name: 'HC COMERCIAL',
+    },
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'PYG',
+      price: product.discountedPrice ?? product.price,
+      availability: product.quantity > 0
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+      seller: {
+        '@type': 'Organization',
+        name: 'HC COMERCIAL S.R.L.',
+      },
+    },
+    ...(product.additionalInformation.length > 0 && {
+      additionalProperty: product.additionalInformation.map((spec) => ({
+        '@type': 'PropertyValue',
+        name: spec.name,
+        value: spec.description,
+      })),
+    }),
+  }
+
   return (
     <div className="pt-6 sm:pt-10 pb-20">
       <ScrollTopOnMount />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-8 xl:px-0">
 
         {/* Breadcrumb */}
@@ -108,6 +177,25 @@ export default async function ProductPage({ params }: { params: Promise<{ catego
             {/* Acciones */}
             <ProductActions product={product} />
 
+            {/* Especificaciones técnicas — solo mobile (debajo del botón de carrito) */}
+            {product.additionalInformation.length > 0 && (
+              <div className="block lg:hidden mt-6 border border-gray-3 rounded-xl overflow-hidden">
+                <div className="px-4 py-3 bg-gray-1 border-b border-gray-3">
+                  <h2 className="text-sm font-semibold text-dark uppercase tracking-wide">Especificaciones técnicas</h2>
+                </div>
+                <table className="w-full text-sm">
+                  <tbody>
+                    {product.additionalInformation.map((spec, i) => (
+                      <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-1'}>
+                        <td className="py-2.5 px-4 font-medium text-dark w-2/5 align-top">{spec.name}</td>
+                        <td className="py-2.5 px-4 text-dark-3 align-top">{spec.description}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
             {/* Cotizador de flete */}
             <ShippingCalculator />
 
@@ -137,6 +225,25 @@ export default async function ProductPage({ params }: { params: Promise<{ catego
               className="prose text-dark-3 leading-relaxed"
               dangerouslySetInnerHTML={{ __html: product.description }}
             />
+          </div>
+        )}
+
+        {/* Especificaciones técnicas — solo desktop (debajo de descripción) */}
+        {product.additionalInformation.length > 0 && (
+          <div className="hidden lg:block bg-white border border-gray-3 rounded-2xl overflow-hidden mb-8">
+            <div className="px-6 py-4 border-b border-gray-3">
+              <h2 className="text-xl font-semibold text-dark">Especificaciones técnicas</h2>
+            </div>
+            <table className="w-full text-sm">
+              <tbody>
+                {product.additionalInformation.map((spec, i) => (
+                  <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-1'}>
+                    <td className="py-3 px-6 font-medium text-dark w-1/3 align-top border-r border-gray-3">{spec.name}</td>
+                    <td className="py-3 px-6 text-dark-3 align-top">{spec.description}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
 

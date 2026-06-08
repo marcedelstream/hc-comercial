@@ -39,7 +39,11 @@ function mapProduct(p: Record<string, unknown>): StaticProduct {
     tags:                 (p.tags as string[]) ?? [],
     offers:               [],
     sku:                  String(p.ascont_barcode ?? p.id),
-    additionalInformation: [],
+    additionalInformation: Array.isArray(p.additional_information)
+      ? (p.additional_information as { name: string; description: string }[]).filter(
+          (s) => s?.name || s?.description
+        )
+      : [],
   }
 }
 

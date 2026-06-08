@@ -2,6 +2,7 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
 import { notFound } from 'next/navigation'
 import { updateProductAction } from './actions'
 import ProductImageUpload from './ProductImageUpload'
+import SpecsEditor from './SpecsEditor'
 import Link from 'next/link'
 
 export default async function ProductoEditPage({ params }: { params: Promise<{ id: string }> }) {
@@ -15,6 +16,7 @@ export default async function ProductoEditPage({ params }: { params: Promise<{ i
 
   const cat = p.categories as unknown as { id: number; name: string } | null
   const images = (p.images as string[]) ?? []
+  const specs = (p.additional_information as { name: string; description: string }[]) ?? []
 
   return (
     <div className="p-8 max-w-2xl">
@@ -110,6 +112,15 @@ export default async function ProductoEditPage({ params }: { params: Promise<{ i
           <textarea name="description" rows={5}
             defaultValue={p.description ?? ''}
             className="w-full border border-gray-3 rounded-lg px-4 py-2.5 text-sm text-dark focus:outline-none focus:border-blue transition-colors font-mono text-xs" />
+        </div>
+
+        {/* Especificaciones técnicas */}
+        <div>
+          <label className="block text-sm font-medium text-dark mb-1.5">
+            Especificaciones técnicas{' '}
+            <span className="text-dark-4">(se muestran como tabla en la página del producto)</span>
+          </label>
+          <SpecsEditor initial={specs} />
         </div>
 
         <button type="submit"
