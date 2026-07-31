@@ -1,8 +1,12 @@
 import { Metadata } from 'next'
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hc-comercial.vercel.app'
+
 export const metadata: Metadata = {
   title: 'Política de Privacidad | HC COMERCIAL',
   description: 'Política de privacidad y tratamiento de datos personales de HC COMERCIAL S.R.L.',
+  alternates: { canonical: `${SITE_URL}/privacidad` },
+  robots: { index: false, follow: false },
 }
 
 export default function PrivacidadPage() {

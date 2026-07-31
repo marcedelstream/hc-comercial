@@ -3,10 +3,42 @@ import { getCategories } from "@/get-api-data/category";
 import { formatPrice } from "@/utils/formatePrice";
 import Link from "next/link";
 
-export const metadata = {
-  title: "Tienda | HC COMERCIAL",
-  description: "Equipos gastronómicos de alta calidad. Freidoras, hornos, heladeras, batidoras y más.",
-};
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hc-comercial.vercel.app'
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string; search?: string }>
+}): Promise<import('next').Metadata> {
+  const { category, search } = await searchParams
+  const cats = await getCategories()
+  const activeCat = cats.find((c) => c.slug === category)
+
+  const title = search
+    ? `"${search}" — Tienda | HC COMERCIAL`
+    : activeCat
+    ? `${activeCat.title} | HC COMERCIAL`
+    : 'Tienda de Equipos Gastronómicos | HC COMERCIAL'
+
+  const description = activeCat
+    ? `Comprá ${activeCat.title} en HC COMERCIAL. Equipos gastronómicos de calidad con envío a todo Paraguay.`
+    : 'Equipos gastronómicos de alta calidad en Paraguay. Freidoras, hornos industriales, heladeras comerciales, batidoras y más.'
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `${SITE_URL}/shop` },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/shop`,
+      siteName: 'HC COMERCIAL',
+      locale: 'es_PY',
+      type: 'website',
+    },
+    twitter: { card: 'summary_large_image', title, description },
+  }
+}
 
 const LIMIT = 12;
 

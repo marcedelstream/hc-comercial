@@ -1,12 +1,52 @@
+import { Metadata } from 'next'
 import Link from "next/link";
 
-export const metadata = {
-  title: "Contacto | HC COMERCIAL",
-  description: "Contactate con HC COMERCIAL. Equipos gastronómicos en Paraguay.",
-};
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hc-comercial.vercel.app'
+
+export const metadata: Metadata = {
+  title: 'Contacto | HC COMERCIAL',
+  description: 'Contactate con HC COMERCIAL. Venta de equipos gastronómicos en Paraguay. Respondemos por WhatsApp al +595 982 800 258.',
+  alternates: { canonical: `${SITE_URL}/contacto` },
+  openGraph: {
+    title: 'Contacto | HC COMERCIAL',
+    description: 'Contactate con HC COMERCIAL. Venta de equipos gastronómicos en Paraguay. Respondemos por WhatsApp.',
+    url: `${SITE_URL}/contacto`,
+    siteName: 'HC COMERCIAL',
+    locale: 'es_PY',
+    type: 'website',
+  },
+}
+
+const jsonLdLocalBusiness = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: 'HC COMERCIAL S.R.L.',
+  url: SITE_URL,
+  telephone: '+595982800258',
+  email: 'ventas@hccomercial.com.py',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Asunción',
+    addressCountry: 'PY',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: -25.2867,
+    longitude: -57.647,
+  },
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    opens: '08:00',
+    closes: '18:00',
+  },
+  sameAs: ['https://wa.me/595982800258'],
+}
 
 export default function ContactoPage() {
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdLocalBusiness) }} />
     <main className="pb-20 pt-10">
       <div className="max-w-3xl mx-auto px-4 sm:px-8 xl:px-0">
         <div className="mb-10">
@@ -111,5 +151,6 @@ export default function ContactoPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }

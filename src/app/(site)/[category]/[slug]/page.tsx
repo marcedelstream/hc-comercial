@@ -106,13 +106,21 @@ export default async function ProductPage({ params }: { params: Promise<{ catego
     }),
   }
 
+  const jsonLdBreadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Tienda', item: `${SITE_URL}/shop` },
+      { '@type': 'ListItem', position: 2, name: product.category.title, item: `${SITE_URL}/shop?category=${product.category.slug}` },
+      { '@type': 'ListItem', position: 3, name: product.title, item: canonicalUrl },
+    ],
+  }
+
   return (
     <div className="pt-6 sm:pt-10 pb-20">
       <ScrollTopOnMount />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }} />
       <div className="max-w-7xl mx-auto px-4 sm:px-8 xl:px-0">
 
         {/* Breadcrumb */}

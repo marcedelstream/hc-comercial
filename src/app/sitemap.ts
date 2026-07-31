@@ -13,7 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getCategories(),
   ])
 
-  // Páginas estáticas
+  // Páginas estáticas indexables
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: SITE_URL,
@@ -37,17 +37,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}/contacto`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
-      priority: 0.5,
+      priority: 0.6,
     },
+    // /cart, /checkout y /privacidad excluidos: noindex
   ]
 
-  // Páginas de categoría
-  const categoryPages: MetadataRoute.Sitemap = categories.map((cat) => ({
-    url: `${SITE_URL}/shop?category=${cat.slug}`,
-    lastModified: cat.updatedAt ? new Date(cat.updatedAt) : new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }))
+  // Categorías como páginas de tienda filtrada (canonical = /shop)
+  // No se incluyen en sitemap como URLs separadas para evitar duplicados
 
   // Páginas de producto individuales
   const productPages: MetadataRoute.Sitemap = products
@@ -59,5 +55,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }))
 
-  return [...staticPages, ...categoryPages, ...productPages]
+  return [...staticPages, ...productPages]
 }

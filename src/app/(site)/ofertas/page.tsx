@@ -4,9 +4,25 @@ import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = {
-  title: 'Ofertas | HC COMERCIAL',
-  description: 'Productos en promoción con descuento. Equipos gastronómicos al mejor precio.',
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hc-comercial.vercel.app'
+
+export const metadata: import('next').Metadata = {
+  title: 'Ofertas y Descuentos | HC COMERCIAL',
+  description: 'Equipos gastronómicos en oferta en Paraguay. Comprá hornos, freidoras y más con descuento. Precios en guaraníes con envío a todo el país.',
+  alternates: { canonical: `${SITE_URL}/ofertas` },
+  openGraph: {
+    title: 'Ofertas y Descuentos | HC COMERCIAL',
+    description: 'Equipos gastronómicos en oferta en Paraguay. Precios en guaraníes con envío a todo el país.',
+    url: `${SITE_URL}/ofertas`,
+    siteName: 'HC COMERCIAL',
+    locale: 'es_PY',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Ofertas y Descuentos | HC COMERCIAL',
+    description: 'Equipos gastronómicos en oferta en Paraguay.',
+  },
 }
 
 export default async function OfertasPage() {
