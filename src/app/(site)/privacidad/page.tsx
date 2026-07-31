@@ -1,6 +1,6 @@
-import { Metadata } from 'next'
+﻿import { Metadata } from 'next'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hc-comercial.vercel.app'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hccomercial.com.py'
 
 export const metadata: Metadata = {
   title: 'Política de Privacidad | HC COMERCIAL',

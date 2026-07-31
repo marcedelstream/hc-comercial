@@ -1,10 +1,10 @@
-import { getProductsOnSale } from '@/get-api-data/product'
+﻿import { getProductsOnSale } from '@/get-api-data/product'
 import { formatPrice } from '@/utils/formatePrice'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hc-comercial.vercel.app'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hccomercial.com.py'
 
 export const metadata: import('next').Metadata = {
   title: 'Ofertas y Descuentos | HC COMERCIAL',

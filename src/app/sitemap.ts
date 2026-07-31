@@ -1,8 +1,8 @@
-import { MetadataRoute } from 'next'
+﻿import { MetadataRoute } from 'next'
 import { getAllProducts } from '@/get-api-data/product'
 import { getCategories } from '@/get-api-data/category'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hc-comercial.vercel.app'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hccomercial.com.py'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 3600 // regenerar cada 1 hora

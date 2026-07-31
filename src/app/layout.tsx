@@ -1,4 +1,4 @@
-import "./css/style.css";
+﻿import "./css/style.css";
 import { Metadata } from "next";
 import { getSeoSettings, getSiteName } from "@/get-api-data/seo-setting";
 import { GoogleTagManager } from '@next/third-parties/google';
@@ -13,7 +13,7 @@ const dm_sans = DM_Sans({
 export async function generateMetadata(): Promise<Metadata> {
   const seoSettings = await getSeoSettings()
   const site_name = await getSiteName()
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hc-comercial.vercel.app'
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hccomercial.com.py'
 
   const title = seoSettings?.siteTitle
     ? `${seoSettings.siteTitle} | ${site_name}`

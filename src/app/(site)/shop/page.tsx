@@ -1,9 +1,9 @@
-import { getProductsPaginated } from "@/get-api-data/product";
+﻿import { getProductsPaginated } from "@/get-api-data/product";
 import { getCategories } from "@/get-api-data/category";
 import { formatPrice } from "@/utils/formatePrice";
 import Link from "next/link";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hc-comercial.vercel.app'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://hccomercial.com.py'
 
 export async function generateMetadata({
   searchParams,
